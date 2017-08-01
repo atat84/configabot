@@ -46,13 +46,7 @@ namespace Bot_ApplicationCTest.Dialogs
             if (activity.Text == "start")
             {
 
-                //----------------------------------------------------
-                //INIZIO
-                //----------------------------------------------------
-                
-
-                //List<Job> model = null;
-
+                //GET BIKE FAMILIES
                 using (var client = new HttpClient())
                 {
                     client.BaseAddress = new Uri("http://configurator.scramblerducati.com/");
@@ -74,40 +68,6 @@ namespace Bot_ApplicationCTest.Dialogs
 
                         JArray models = (JArray)fams[0]["models"];
 
-                        /*
-                        for(int i=0; i<models.Count;i++)
-                        { 
-
-                            string modelId = models[i]["id"].Value<string>().ToString();
-                            string modelName = models[i]["name"].Value<string>().ToString();
-                            string modelImage = models[i]["preview_image"].Value<string>().ToString();
-                            string modelFamily = models[i]["family_name"].Value<string>().ToString();
-                            string modelBackground = models[i]["background"].Value<string>().ToString();
-
-
-                            await context.PostAsync(activity.CreateReply("Famiglia: " + familyName));
-                            await context.PostAsync(activity.CreateReply("Immagine: " + familyImage));
-
-                            await context.PostAsync(activity.CreateReply("Modello: " + modelName));
-                            await context.PostAsync(activity.CreateReply("Immagine: " + modelImage));
-
-                        }
-
-
-                        replym.Text = models[0]["name"].Value<string>().ToString();
-
-                        replym.Attachments = new List<Attachment>();
-                        Attachment messageOptions = new Attachment();
-
-                        //IMAGE
-                        messageOptions.ContentType = "image/jpg";
-                        messageOptions.ContentUrl = models[0]["preview_image"].Value<string>().ToString();
-
-                        replym.Attachments.Add(messageOptions);
-
-                        await context.PostAsync(replym);
-
-                        */
 
                         //ATTACHMENT CAROUSEL START
 
@@ -160,32 +120,21 @@ namespace Bot_ApplicationCTest.Dialogs
 
                         //ATTACHMENT CAROUSEL END
 
-                        //replym.Text = "Fai la tua mossa";
-
-                        //await context.PostAsync(replym);
-
                     }
                 }
 
-                //----------------------------------------------------
-                //FINE
-                //----------------------------------------------------
 
             }
             else if (modelsList.Exists(x => x.modelName.Contains(activity.Text)))
             {
                 //FAMIGLIE DI ACCESSORI
-
                 modelPreconfigId = modelsList.Find(x => x.modelName.Contains(activity.Text)).preconfigurationId;
-
-                //await context.PostAsync("Esiste Modelo");
 
                 using (var client = new HttpClient())
                 {
                     client.BaseAddress = new Uri("http://configurator.scramblerducati.com/");
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
 
                     HttpResponseMessage resp = await client.GetAsync("bikes/v1/it/it/preconfigurations/" + modelPreconfigId + "/accessories");
                     if (resp.IsSuccessStatusCode)
@@ -195,11 +144,6 @@ namespace Bot_ApplicationCTest.Dialogs
                         var AccFamilies = JsonConvert.DeserializeObject(jsonString);
 
                         JArray AccFams = (JArray)AccFamilies;
-
-                        //string AccFamilyName = AccFams[0]["group_name"].Value<string>().ToString();
-                        //JArray AccModels = (JArray)AccFams[0]["accessories"];
-                        //string AccFamilyImage = AccModels[0]["preview_image"].Value<string>().ToString();
-
 
                         //ATTACHMENT CAROUSEL START
 
@@ -266,7 +210,6 @@ namespace Bot_ApplicationCTest.Dialogs
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    //var oggetto = new ClassificaFindWordBot() { name = activity.From.Name, parola = impiccati.Find(x => x.convId.Contains(activity.Conversation.Id)).parola, time = Convert.ToInt16(Math.Round(tempo.TotalSeconds, 2)), data = DateTime.Now };
                     var resp = await client.PostAsJsonAsync("http://configurator.scramblerducati.com/bikes/v1/it/it/configuration/init/" + modelPreconfigId + "?resolution_width=1280","");
                     if (resp.IsSuccessStatusCode)
                     {
@@ -319,14 +262,11 @@ namespace Bot_ApplicationCTest.Dialogs
                 string accFamilyName = accFamiliesList.Find(x => x.accFamilyName.Contains(activity.Text)).accFamilyName;
                 int accFamilyNameIndex = accFamiliesList.IndexOf(accFamily);
 
-                //await context.PostAsync("Esiste Familia Acesorio");
-
                 using (var client = new HttpClient())
                 {
                     client.BaseAddress = new Uri("http://configurator.scramblerducati.com/");
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
 
                     HttpResponseMessage resp = await client.GetAsync("bikes/v1/it/it/preconfigurations/" + modelPreconfigId + "/accessories");
                     if (resp.IsSuccessStatusCode)
@@ -337,9 +277,7 @@ namespace Bot_ApplicationCTest.Dialogs
 
                         JArray AccFams = (JArray)AccFamilies;
 
-                        //string AccFamilyName = AccFams[0]["group_name"].Value<string>().ToString();
                         JArray AccModels = (JArray)AccFams[accFamilyNameIndex]["accessories"];
-                        //string AccFamilyImage = AccModels[0]["preview_image"].Value<string>().ToString();
 
 
                         //ATTACHMENT CAROUSEL START
@@ -404,20 +342,12 @@ namespace Bot_ApplicationCTest.Dialogs
                 //AGGIUNGI ACCESSORIO ALLA CONFIGURAZIONE
 
                 string accId = accList.Find(x => x.accName.Contains(activity.Text)).accId;
-                //int accFamilyNameIndex = accFamiliesList.IndexOf(accFamily);
-
-                //await context.PostAsync("Agiungo Acesorio");
 
                 using (var client = new HttpClient())
                 {
                     client.BaseAddress = new Uri("http://configurator.scramblerducati.com/");
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    //client.DefaultRequestHeaders.Add("Content-Type", "application/json");
-
-                    //var oggetto = new ClassificaFindWordBot() { name = activity.From.Name, parola = impiccati.Find(x => x.convId.Contains(activity.Conversation.Id)).parola, time = Convert.ToInt16(Math.Round(tempo.TotalSeconds, 2)), data = DateTime.Now };
-                    //var resp = await client.PutAsJsonAsync("http://configurator.scramblerducati.com/bikes/v1/it/it/configuration/" + myConfig.cid + "/accessories/" + accId + "?force=false&qty=1&resolution_width=1280", "");
 
                     HttpContent _Body = new StringContent("");
                     _Body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -431,12 +361,6 @@ namespace Bot_ApplicationCTest.Dialogs
                         var initConfig = JsonConvert.DeserializeObject(jsonString);
 
                         JObject bisConfig = (JObject)initConfig;
-
-                        //Configuration ID
-                        //string session = bisConfig.GetValue("session").ToString();
-                        //var desSession = JsonConvert.DeserializeObject(session);
-                        //JObject bisSession = (JObject)desSession;
-                        //string cid = bisSession.GetValue("cid").ToString();
 
                         //Configuration image
                         string config = bisConfig.GetValue("composed_assets").ToString();
@@ -454,11 +378,8 @@ namespace Bot_ApplicationCTest.Dialogs
                         JObject bizConfigPrice = (JObject)desConfigPrice;
                         string configurationPrice = bizConfigPrice.GetValue("formatted_amount").ToString();
 
-
                         myConfig.confImage = configImage;
                         myConfig.confPrice = configurationPrice;
-
-                        //myConfig = new Configuration(cid, configImage, configurationPrice);
 
                         replym.Text = myConfig.confPrice;
 

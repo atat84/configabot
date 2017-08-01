@@ -398,36 +398,43 @@ namespace Bot_ApplicationCTest.Dialogs
                         replym.Attachments = new List<Attachment>();
                         Attachment altromessageOptions = new Attachment();
 
+                        List<CardImage> cardImages = new List<CardImage>();
+
+                        cardImages.Add(new CardImage(url: myConfig.confImage));
+
                         List<CardAction> endConfigChoices = new List<CardAction>();
 
                         CardAction buttonYes = new CardAction()
                         {
                             Type = "imBack",
-                            Title = "Sì",
-                            Value = "Sì"
+                            Title = "Aggiungi un altro accessorio",
+                            Value = modelName
                         };
 
                         CardAction buttonNo = new CardAction()
                         {
-                            Type = "imBack",
-                            Title = "No",
-                            Value = "No"
+                            Type = "openUrl",
+                            Title = "Vieni a provarla!",
+                            Value = "https://contact.ducati.com/it/it/scrambler/contact/model-info"
                         };
 
                         endConfigChoices.Add(buttonYes);
                         endConfigChoices.Add(buttonNo);
 
                         //associate the Attachments List with the Message and send it
-                        //conversation.msgAltro.Attachments.Add(altromessageOptions);
+                        
 
                         HeroCard plCard = new HeroCard()
                         {
 
-                            Title = $"Scegli",
+                            Title = $"Cosa vuoi fare adesso?",
                             //Subtitle = $"{cardContent.Key} Wikipedia Page",
-                            //Images = cardImages,
+                            Images = cardImages.ToList().GetRange(0, 1),
                             Buttons = endConfigChoices
                         };
+
+                        Attachment plAttachment = plCard.ToAttachment();
+                        replym.Attachments.Add(plAttachment);
 
 
                         await context.PostAsync(replym);

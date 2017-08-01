@@ -381,16 +381,54 @@ namespace Bot_ApplicationCTest.Dialogs
                         myConfig.confImage = configImage;
                         myConfig.confPrice = configurationPrice;
 
-                        replym.Text = myConfig.confPrice;
+                        //replym.Text = myConfig.confPrice;
 
-                        replym.Attachments = new List<Attachment>();
-                        Attachment messageOptions = new Attachment();
+                        //replym.Attachments = new List<Attachment>();
+                        //Attachment messageOptions = new Attachment();
 
                         //IMAGE
-                        messageOptions.ContentType = "image/jpg";
-                        messageOptions.ContentUrl = myConfig.confImage;
+                        //messageOptions.ContentType = "image/jpg";
+                        //messageOptions.ContentUrl = myConfig.confImage;
 
-                        replym.Attachments.Add(messageOptions);
+                        //replym.Attachments.Add(messageOptions);
+
+
+                        replym = activity.CreateReply(myConfig.confPrice);
+
+                        replym.Attachments = new List<Attachment>();
+                        Attachment altromessageOptions = new Attachment();
+
+                        List<CardAction> endConfigChoices = new List<CardAction>();
+
+                        CardAction buttonYes = new CardAction()
+                        {
+                            Type = "imBack",
+                            Title = "Sì",
+                            Value = "Sì"
+                        };
+
+                        CardAction buttonNo = new CardAction()
+                        {
+                            Type = "imBack",
+                            Title = "No",
+                            Value = "No"
+                        };
+
+                        endConfigChoices.Add(buttonYes);
+                        endConfigChoices.Add(buttonNo);
+
+                        //associate the Attachments List with the Message and send it
+                        //conversation.msgAltro.Attachments.Add(altromessageOptions);
+
+                        HeroCard plCard = new HeroCard()
+                        {
+
+                            Title = $"Scegli",
+                            //Subtitle = $"{cardContent.Key} Wikipedia Page",
+                            //Images = cardImages,
+                            Buttons = endConfigChoices
+                        };
+
 
                         await context.PostAsync(replym);
 

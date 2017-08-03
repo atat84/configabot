@@ -20,6 +20,7 @@ namespace Bot_ApplicationCTest.Dialogs
         public static List<Accessories> accList = new List<Accessories>();
         public static Configuration myConfig;
         string modelName = "";
+        string currentModel = "";
         string modelImage = "";
         string modelPreconfigId = "";
         string cid = "";
@@ -53,7 +54,6 @@ namespace Bot_ApplicationCTest.Dialogs
             else if (modelsList.Exists(x => x.modelName.Contains(activity.Text)))
             {
                 await chooseModelAccessoriesCategory(context, activity);
-                initConfiguration();
             }
 
             else if (accFamiliesList.Exists(x => x.accFamilyName.Contains(activity.Text)))
@@ -63,15 +63,11 @@ namespace Bot_ApplicationCTest.Dialogs
             else if (accList.Exists(x => x.accName.Contains(activity.Text)))
             {
                 await addAccessory(context, activity);
-
             }
-
+   
             else
             {
-
                 await context.PostAsync("Scrivi start per iniziare");
-
-
             }
 
             context.Wait(MessageReceivedAsync);
@@ -163,7 +159,15 @@ namespace Bot_ApplicationCTest.Dialogs
         {
 
             //FAMIGLIE DI ACCESSORI
+            modelName = activity.Text;
+
             modelPreconfigId = modelsList.Find(x => x.modelName.Contains(activity.Text)).preconfigurationId;
+
+            if (currentModel == "")
+            {
+                initConfiguration();
+            }
+
 
             using (var client = new HttpClient())
             {
@@ -279,7 +283,9 @@ namespace Bot_ApplicationCTest.Dialogs
                     JObject bizConfigPrice = (JObject)desConfigPrice;
                     string configurationPrice = bizConfigPrice.GetValue("formatted_amount").ToString();
 
-                    myConfig = new Configuration(cid, configImage, configurationPrice);
+                    myConfig = new Configuration(cid, configImage, configurationPrice, modelName);
+
+                    currentModel = modelName;
 
                 }
                 else
@@ -436,7 +442,7 @@ namespace Bot_ApplicationCTest.Dialogs
                     {
                         Type = "imBack",
                         Title = "Aggiungi un altro accessorio",
-                        Value = modelName
+                        Value = myConfig.modelName
                     };
 
                     CardAction buttonNo = new CardAction()
